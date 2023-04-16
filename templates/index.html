@@ -1,0 +1,45 @@
+<!-- index.html -->
+
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>GPT활용한 주식시황 분석</title>
+</head>
+<body>
+  <h1>GPT활용한 주식시황 분석</h1>
+  <form method="POST">
+    <label for="date">날짜를 선택하세요 : </label>
+    <input type="date" id="date-input" class="form-control" name="date" required>
+<button type="submit" id="submit-button" class="btn btn-primary" disabled>Submit</button>
+  </form>
+    
+
+<form method="POST" action="/run_report">
+    <button type="submit">어제 데이터 생성하기</button>
+  </form>
+
+  
+  {% if stock_content %}
+  <h2>Stock CSV Contents</h2>
+  <pre>{{ stock_content }}</pre>
+  {% endif %}
+  {% if cur_content %}
+  <h2>Current CSV Contents</h2>
+  <pre>{{ cur_content }}</pre>
+  {% endif %}
+  {% if analyze_content %}
+  <h2>Analyze Text Contents</h2>
+  <p>{{ analyze_content }}</p>
+  {% endif %}
+</body>
+</html>
+<script>
+    document.getElementById('date-input').addEventListener('input', function(event) {
+        if (event.target.value) {
+            document.getElementById('submit-button').disabled = false;
+        } else {
+            document.getElementById('submit-button').disabled = true;
+        }
+    });
+</script>
