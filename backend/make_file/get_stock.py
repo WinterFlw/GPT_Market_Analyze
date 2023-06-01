@@ -1,130 +1,140 @@
 from .get_API import *
 from .get_foldername import *
-
+import os
 import FinanceDataReader as fdr
-import yfinance as yf
-
+import csv
 
 def calculate_change_percentage(today_rate, composeday_rate):
     return round((today_rate - composeday_rate) / composeday_rate * 100, 2)
 
 def get_etf_data():
-    etf_data = [
-        ("미국", "VTI"),("일본","EWJ"),("유로존","EZU"),("대한민국", "EWY"), ("신흥국","EEM"),
-        ("S&P500", "VOO"), ("나스닥100", "QQQ"), ("다우", "DIA"), ("VIX","VXX"),
-        ("정보기술", "XLK"), ("헬스케어", "XLV"), ("금융", "XLF"), ("커뮤니케이션", "XLC"),
-        ("소비순환재", "XLY"), ("경기방어주", "XLP"), ("산업재", "XLI"), ("유틸리티", "XLU"),
-        ("에너지", "XLE"), ("리츠", "XLRE"), ("소재", "XLB"), ("반도체", "SOXX"), ("빅테크", "BULZ"),
-        ("배당", "SCHD"), ("대형성장", "VUG"), ("중형성장", "IWP"), ("대형가치", "VTV"), ("중형가치", "VOE"),
-        ("미국단기 채권", "SHY"),("미국중기 채권", "IEF"),("미국장기 채권", "TLT")
-    ]
+    etf_data = {
+        'stock_indices': (
+            ('다우 존스', 'Dow Jones', '^DJI'),
+            ('나스닥', 'Nasdaq', '^IXIC'),
+            ('S&P 500', 'S&P500', '^GSPC'),
+            #('CSI 300', 'CSI300', 'ASHR'),
+            #('유로 스톡스 50', 'Euro Stoxx 50', '^STOXX50E'),
+            #('항생지수', 'Hang Seng', '^HSI'),
+            #('코스닥', 'KOSDAQ', '^KQ11'),
+            #('코스피', 'KOSPI', '^KS11'),
+            #('MSCI 신흥시장 지수', 'MSCI Emerging Markets', 'EEM'),
+            #('닛케이', 'Nikkei', '^N225')
+        ),
+        'sector_etfs': (
+            ('정보기술', 'Information Technology', 'XLK'),
+            ('헬스케어', 'Healthcare', 'XLV'),
+            ('금융', 'Finance', 'XLF'),
+            ('커뮤니케이션', 'Communications', 'XLC'),
+            ('소비순환주', 'Consumer Cyclical', 'XLY'),
+            ('경기방어주', 'Defensive Stocks', 'XLP'),
+            ('산업재', 'Industrials', 'XLI'),
+            ('유틸리티', 'Utilities', 'XLU'),
+            ('에너지', 'Energy', 'XLE'),
+            ('리츠', 'REITs', 'XLRE'),
+            ('소재', 'Materials', 'XLB'),
+            ('반도체', 'Semiconductor', 'SOXX'),
+            ('빅테크', 'Big Tech', 'BULZ'),
+            ('배당', 'Dividend', 'SCHD'),
+            ('대형 성장주', 'Large Cap Growth', 'VUG'),
+            ('대형 가치주', 'Large Cap Value', 'VTV'),
+            ('중형 성장주', 'Mid Cap Growth', 'IWP'),
+            ('중형 가치주', 'Mid Cap Value', 'VOE'),
+            ('반도체', 'Semiconductor', 'SOXX')
+        ),
+        'bonds_and_bond_futures': (
+            ('2년 미국 국채 선물', '2-Year US Treasury Futures', 'ZT=F'),
+            ('5년 미국 국채 선물', '5-Year US Treasury Futures', 'ZF=F'),
+            ('10년 미국 국채 선물', '10-Year US Treasury Futures', 'ZN=F'),
+            ('20년 이상 미국 국채 선물', '20+ Year US Treasury Futures', 'ZB=F')
+        ),
+        'cryptocurrencies': (
+            ('비트코인', 'Bitcoin', 'BTC/USD'),
+            ('이더리움', 'Ethereum', 'ETH/USD'),
+            ('리플', 'Ripple', 'XRP/USD')
+        ),
+
+        'metals': (
+            ('금', 'Gold', 'GC=F'),
+            ('팔라듐', 'Palladium', 'PA=F'),
+            ('플래티넘', 'Platinum', 'PL=F'),
+            ('은', 'Silver', 'SI=F'),
+            ('구리', 'Copper', 'CL=F')
+        ),
+
+        'energy': (
+            ('브런트유', 'Brent Crude Oil', 'BZ=F'),
+            ('가솔린', 'Gasoline', 'RB=F'),
+            ('히팅오일', 'Heating Oil', 'HO=F'),
+            ('천연가스', 'Natural Gas', 'NG=F'),
+            ('WTI유', 'WTI Crude Oil', 'CL=F')
+        ),
+
+        'agriculture': (
+            ('옥수수', 'Corn', 'ZC=F'),
+            ('돼지', 'Lean Hogs', 'HE=F'),
+            ('소', 'Live Cattle', 'LE=F'),
+            ('비육우', 'Feeder Cattle', 'GF=F'),
+            ('귀리', 'Oats', 'ZO=F'),
+            ('쌀', 'Rough Rice', 'ZR=F'),
+            ('대두유', 'Soybean Oil', 'ZL=F'),
+            ('콩', 'Soybeans', 'ZS=F'),
+            ('밀', 'Wheat', 'KE=F')
+        ),
+
+        'soft_commodities': (
+            ('코코아', 'Cocoa', 'CC=F'),
+            ('커피', 'Coffee', 'KC=F'),
+            ('목화', 'Cotton', 'CT=F'),
+            ('목재', 'Lumber', 'LBS=F'),
+            ('오렌지주스', 'Orange Juice', 'OJ=F'),
+            ('설탕', 'Sugar', 'SB=F')
+        )
+        }
     return etf_data
 
-def etf_korean_to_english():
-    return {
-        '미국': 'USA',
-        '일본': 'Japan',
-        '유로존': 'Eurozone',
-        '대한민국': 'South Korea',
-        '신흥국': 'Emerging Markets',
-        'S&P500' : 'S&P500',
-        '나스닥100' : 'Nasdaq100',
-        '다우' : 'dow',
-        'VIX':'VIX',
-        '정보기술':'Information Technology',
-        '헬스케어':'Healthcare',
-        '금융':'Finance',
-        '커뮤니케이션':'Communications',
-        '소비순환재':'Consumer Circular Goods',
-        '경기방어주':'Defensive Stocks',
-        '산업재':'Industrials',
-        '유틸리티':'Utilities',
-        '에너지':'Energy',
-        '리츠':'REITs',
-        '소재':'Materials',
-        '반도체':'Semiconductor',
-        '빅테크':'Big Tech',
-        '배당':'Dividend',
-        '대형성장':'Mass Growth',
-        '중형성장':'Medium Growth',
-        '대형가치':'Mass Value',
-        '중형가치':'Medium Value',
-        '미국단기 채권':'US short-term bonds',
-        '미국중기 채권':'미국중기 채권',
-        '미국장기 채권':'미국장기 채권',
-    }
-
-def process_etf_data(etf_data, today, composeday, report):        
+def process_etf_data(etf_data, today, composeday, report):
     etf_dataset = []
     today = today.strftime("%Y-%m-%d")
     composeday = composeday.strftime("%Y-%m-%d")
-    
-    if report != 'D' :
-        for name, ticker in etf_data:
-            if report == 'M':
-                stock_info = fdr.DataReader(ticker,composeday, today)
-            else:
-                stock_info = fdr.DataReader(ticker,composeday)
-            print(stock_info)
-            if 'Close' not in stock_info.columns:
-                print(f"Error: 'Close' column not found for {ticker}. Skipping this ETF.")
-                continue
-            OPEN = stock_info['Open'].iloc[0]
-            CLOSE = stock_info['Close'].iloc[-1]
-            price_change = calculate_change_percentage(OPEN, CLOSE)  # Calculate the change in percentage
-            etf_dataset.append((name, ticker, price_change))
-            
+    if report != 'D':
+        for sector, data in etf_data.items():
+            for name, ticker in data:
+                if report == 'M':
+                    stock_info = fdr.DataReader(ticker, composeday, today)
+                else:
+                    stock_info = fdr.DataReader(ticker, composeday)
+                print(name)
+                if 'Close' not in stock_info.columns:
+                    print(f"Error: 'Close' column not found for {ticker}. Skipping this ETF.")
+                    continue
+                Td_close = stock_info['Close'].iloc[0]
+                Co_close = stock_info['Close'].iloc[-1]
+                price_change = calculate_change_percentage(Td_close, Co_close)  # Calculate the change in percentage
+                etf_dataset.append((sector, name, ticker, price_change))
     else:
-        for name, ticker in etf_data:
-            composeday_stock_info = fdr.DataReader(ticker,composeday,composeday)
-            today_stock_info = fdr.DataReader(ticker,today,today)
-            print(composeday_stock_info, today_stock_info)
-            if 'Close' not in composeday_stock_info.columns and 'Close' not in today_stock_info.columns:
-                print(f"Error: 'Close' column not found for {ticker}. Skipping this ETF.")
-                continue
-            compo_close = composeday_stock_info['Open'].iloc[-1]
-            today_close = today_stock_info['Close'].iloc[-1]
-            price_change = calculate_change_percentage(compo_close, today_close)  # Calculate the change in percentage
-            etf_dataset.append((name, ticker, price_change))
+        #print(etf_data.items())
+        for sector, data in etf_data.items():
+            for kr_name, en_name, ticker in data:
+                composeday_stock_info = fdr.DataReader(ticker, composeday, composeday)
+                today_stock_info = fdr.DataReader(ticker, today, today)
+                print(composeday_stock_info, today_stock_info)
+                if 'Close' not in composeday_stock_info.columns and 'Close' not in today_stock_info.columns:
+                    print(f"Error: 'Close' column not found for {ticker}. Skipping this ETF.")
+                    continue
+                compo_close = composeday_stock_info['Open'].iloc[-1]
+                today_close = today_stock_info['Close'].iloc[-1]
+                price_change = calculate_change_percentage(compo_close, today_close)  # Calculate the change in percentage
+                price = round(today_close, 2)
+                etf_dataset.append((sector, kr_name, en_name, ticker, price, price_change))
     return etf_dataset
-
-def get_technical_data(ticker, start_day, end_day):
-    ticker = ticker
-    technical_data = yf.download(ticker, start=start_day, end=end_day)
-
-    # Calculate Moving Averages (SMA)
-    technical_data['SMA20'] = technical_data['Close'].rolling(window=20).mean()
-    technical_data['SMA50'] = technical_data['Close'].rolling(window=50).mean()
-    technical_data['SMA200'] = technical_data['Close'].rolling(window=200).mean()
-
-    # Calculate Bollinger Bands
-    technical_data['BB_Middle'] = technical_data['Close'].rolling(window=20).mean()
-    technical_data['BB_Upper'] = technical_data['BB_Middle'] + 2 * technical_data['Close'].rolling(window=20).std()
-    technical_data['BB_Lower'] = technical_data['BB_Middle'] - 2 * technical_data['Close'].rolling(window=20).std()
-
-    # Calculate RSI
-    delta = technical_data['Close'].diff()
-    gain = delta.where(delta > 0, 0)
-    loss = -delta.where(delta < 0, 0)
-    avg_gain = gain.rolling(window=14).mean()
-    avg_loss = loss.rolling(window=14).mean()
-    rs = avg_gain / avg_loss
-    technical_data['RSI'] = 100 - (100 / (1 + rs))
-
-    # Calculate MACD
-    technical_data['EMA12'] = technical_data['Close'].ewm(span=12).mean()
-    technical_data['EMA26'] = technical_data['Close'].ewm(span=26).mean()
-    technical_data['MACD'] = technical_data['EMA12'] - technical_data['EMA26']
-    technical_data['MACD_Signal'] = technical_data['MACD'].ewm(span=9).mean()
-
-    return technical_dataset
 
 def store_stock_data_to_csv(etf_dataset, foldername):
     folder_name = foldername
     os.chdir('/workspace/GPT_Market_Analyze')
     with open(f"dataset/{folder_name}/stock.csv", mode="w", newline='', encoding='utf-8') as csvfile:
         csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(["Sector", "Ticker", "DAILY_CHANGE_PCT"])
-        
+        csv_writer.writerow(["Sector", "KR_name", "EN_name","Ticker", "Price", "DAILY_CHANGE_PCT"])
+
         for ETFdata in etf_dataset:
             csv_writer.writerow(ETFdata)

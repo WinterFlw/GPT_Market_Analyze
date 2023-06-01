@@ -11,6 +11,16 @@ pip install beautifulsoup4
 pip install yfinance
 pip install numpy
 pip install Flask
+pip install fastapi uvicorn
+pip install python-multipart
+pip install feedparser
+pip install schedule
 
+pip install nltk
+python -m nltk.downloader vader_lexicon
+
+date
 sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 sudo apt-get install git-core
+TZ='Asia/Seoul'; export TZ
+https://newsapi.org/docs

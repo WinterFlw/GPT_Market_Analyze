@@ -1,0 +1,51 @@
+body {
+    font-family: 'Noto Sans KR', 'Roboto', sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+
+
+search-button {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    margin: 10px 0;
+    margin-left: 20px; /* Add space to the left of the button */
+    border: none;
+    cursor: pointer;
+    width: 100px;  /* Set a specific width */
+    height: 30px;  /* Set a specific height */
+}
+
+data-button {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #4CAF50;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.8;
+}

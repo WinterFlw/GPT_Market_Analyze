@@ -1,36 +1,36 @@
-<!-- index.html -->
-
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8">
   <title>GPT활용한 주식시황 분석</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"> <!-- Ensure this path is correct -->
 </head>
 <body>
   <h1>GPT활용한 주식시황 분석</h1>
   <form method="POST">
     <label for="date">날짜를 선택하세요 : </label>
     <input type="date" id="date-input" class="form-control" name="date" required>
-<button type="submit" id="submit-button" class="btn btn-primary" disabled>Submit</button>
-  </form>
-    
-
-<form method="POST" action="/run_report">
-    <button type="submit">어제 데이터 생성하기</button>
+    <button type="submit" id="submit-button" class="btn btn-primary search-button" disabled>검색</button>
   </form>
 
-  
+  <form method="POST" action="/run_report">
+    <button type="submit" class="data-button">어제 데이터 생성하기</button>
+  </form>
+
   {% if stock_content %}
   <h2>Stock CSV Contents</h2>
-  <pre>{{ stock_content }}</pre>
+  <div>{{ stock_content|safe }}</div>
   {% endif %}
   {% if cur_content %}
   <h2>Current CSV Contents</h2>
-  <pre>{{ cur_content }}</pre>
+  <div>{{ cur_content|safe }}</div>
   {% endif %}
   {% if analyze_content %}
   <h2>Analyze Text Contents</h2>
-  <p>{{ analyze_content }}</p>
+  <pre>{{ analyze_content }}</pre>
   {% endif %}
 </body>
 </html>

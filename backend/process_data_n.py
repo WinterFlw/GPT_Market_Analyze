@@ -9,7 +9,7 @@ from .make_file.get_foldername import *
 from .make_file.get_FRED import*
 from .make_file.get_current import*
 from .make_file.get_stock import*
-from .make_file.get_article import*
+from .make_file.get_article_n import*
 
 OPENAI_API_KEY = Get_GPT_API_KEY()
 OPENAI_ORG_KET = Get_GPT_ORG_KEY()
@@ -172,7 +172,11 @@ def make_report_proto(period):
         print("Processed ETF_Data.")
         store_stock_data_to_csv(etf_dataset, folder_name)
         print("Saved ETF_Data.")
-        
+    
+    lists_by_sector = create_lists_by_sector(stock_csv_path)
+    os.makedirs(f"dataset/{folder_name}/sector", exist_ok=True)
+    get_sector_article(lists_by_sector, folder_name, fixday, composeday)
+    """
     cur_csv_path = f'dataset/{folder_name}/current.csv'
     if os.path.exists(cur_csv_path):
         print("current.csv already exists. Skipping current data retrieval and processing.")
@@ -186,5 +190,8 @@ def make_report_proto(period):
             print("Saved data.")
         else:
             print("Current Data has wrong.")
+    """
+    """
     store_analysis_to_txt(folder_name, period)
     print("Analysed and Saved Result.")
+    """

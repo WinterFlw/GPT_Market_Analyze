@@ -1,11 +1,13 @@
-from .get_API import *
+import os
+import csv
 from .get_foldername import *
-
 from forex_python.converter import CurrencyRates, RatesNotAvailableError
 from currency_converter import CurrencyConverter
 
+
 def calculate_change_percentage(today_rate, composeday_rate):
     return round((today_rate - composeday_rate) / composeday_rate * 100, 2)
+
 
 def get_cur_data():
     c = CurrencyConverter()
@@ -20,11 +22,11 @@ def get_cur_data():
         ("USD/CNY", "USD", "CNY"),
         ("USD/EUR", "USD", "EUR")
     ]
-    
+
     return c, currency_rates, currency_pairs
 
+
 def process_exchange_rates(c, currency_rates, currency_pairs, today, composeday):
-    
     cur_dataset = []
     errorcode = 0
     for pair, from_currency, to_currency in currency_pairs:
@@ -38,9 +40,10 @@ def process_exchange_rates(c, currency_rates, currency_pairs, today, composeday)
             errorcode = 1
         change = calculate_change_percentage(today_rate, composeday_rate)
         cur_dataset.append((pair, today_rate, change))
-    
+
     return cur_dataset, errorcode
-            
+
+
 def store_exchange_rates_to_csv(cur_dataset, foldername):
     folder_name = foldername
     os.chdir('/workspace/GPT_Market_Analyze')

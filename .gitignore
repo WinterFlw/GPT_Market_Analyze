@@ -1,6 +1,9 @@
 # security
 backend/make_file/get_API.py
 dataset/
+test/
+new/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
