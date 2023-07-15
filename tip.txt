@@ -1,0 +1,5 @@
+date
+sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+sudo apt-get install git-core
+TZ='Asia/Seoul'; export TZ
+https://newsapi.org/docs
