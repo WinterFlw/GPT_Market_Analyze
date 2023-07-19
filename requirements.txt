@@ -15,3 +15,5 @@ pip install schedule
 
 pip install nltk
 python -m nltk.downloader vader_lexicon
+
+pip install pandas-market-calendars
