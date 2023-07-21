@@ -1,17 +1,13 @@
 import os
 import csv
 from .get_foldername import *
-from forex_python.converter import CurrencyRates, RatesNotAvailableError
-from currency_converter import CurrencyConverter
-
+from currency_converter import CurrencyConverter, RateNotFoundError
 
 def calculate_change_percentage(today_rate, composeday_rate):
     return round((today_rate - composeday_rate) / composeday_rate * 100, 2)
 
-
 def get_cur_data():
     c = CurrencyConverter()
-    currency_rates = CurrencyRates()
 
     currency_pairs = [
         ("USD/KRW", "USD", "KRW"),
@@ -23,17 +19,16 @@ def get_cur_data():
         ("USD/EUR", "USD", "EUR")
     ]
 
-    return c, currency_rates, currency_pairs
+    return c, currency_pairs
 
-
-def process_exchange_rates(c, currency_rates, currency_pairs, today, composeday):
+def process_exchange_rates(c, currency_pairs, today, composeday):
     cur_dataset = []
     errorcode = 0
     for pair, from_currency, to_currency in currency_pairs:
         try:
-            today_rate = round(currency_rates.get_rate(from_currency, to_currency, today) * (1 if from_currency != 'JPY' else 100), 2)
-            composeday_rate = round(currency_rates.get_rate(from_currency, to_currency, composeday) * (1 if from_currency != 'JPY' else 100), 2)
-        except RatesNotAvailableError:
+            today_rate = round(c.convert(1, from_currency, to_currency, date=today) * (1 if from_currency != 'JPY' else 100), 2)
+            composeday_rate = round(c.convert(1, from_currency, to_currency, date=composeday) * (1 if from_currency != 'JPY' else 100), 2)
+        except RateNotFoundError:
             print("Currency Rates Source Not Ready")
             today_rate = 1
             composeday_rate = 1
@@ -42,7 +37,6 @@ def process_exchange_rates(c, currency_rates, currency_pairs, today, composeday)
         cur_dataset.append((pair, today_rate, change))
 
     return cur_dataset, errorcode
-
 
 def store_exchange_rates_to_csv(cur_dataset, foldername):
     folder_name = foldername
@@ -53,3 +47,5 @@ def store_exchange_rates_to_csv(cur_dataset, foldername):
 
         for CRTdata in cur_dataset:
             csv_writer.writerow(CRTdata)  # 각 환율 데이터 행 작성
+            
+print(get_cur_data())

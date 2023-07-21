@@ -41,24 +41,6 @@ def get_us_article(us_search_name: str, start: str, end: str) -> List[Dict]:
         print(article, "\n")
     return articles
 
-def analyze_sentiment(article: Dict) -> Dict:
-    """Analyze the sentiment of an article."""
-    sid = SentimentIntensityAnalyzer()
-    sentiment_scores = sid.polarity_scores(article['summary'])
-    return sentiment_scores
-
-def get_us_article_sen(us_search_name: str, start: str, end: str) -> Tuple[List[Dict], Dict]:
-    """Retrieve articles and their sentiment scores from a specific US search name."""
-    us_ssl_url = f'https://news.google.com/news?hl=eg&gl=us&ie=UTF-8&q={us_search_name}+after:{start}+before:{end}&output=rss'
-    articles = get_feed_items(us_ssl_url, 50)
-    print(us_search_name,"English",len(articles), "articles")
-    sentiment_scores_list = []
-    for article in articles:
-        sentiment_scores = analyze_sentiment(article)
-        sentiment_scores_list.append(sentiment_scores)
-        print(article, sentiment_scores,"\n")
-    return articles, sentiment_scores_list
-
 def get_sector_article(lists_by_sector: Dict[str, List[Tuple]], folder_name: str, fixday: str, composeday: str):
     """Retrieve and save articles for a specific sector."""
     fixday_str = fixday.strftime("%Y-%m-%d")
@@ -79,3 +61,29 @@ def get_sector_article(lists_by_sector: Dict[str, List[Tuple]], folder_name: str
                     file.write(f"{article}\n")
         except FileNotFoundError:
             print(f"File not found: dataset/{folder_name}/sector/{sector}.txt")
+
+    
+    """
+    from nltk.sentiment.vader import SentimentIntensityAnalyzer
+    # Download the vader_lexicon package
+    nltk.download('vader_lexicon')
+    
+    def analyze_sentiment(article: Dict) -> Dict:
+    Analyze the sentiment of an article.
+    sid = SentimentIntensityAnalyzer()
+    sentiment_scores = sid.polarity_scores(article['summary'])
+    return sentiment_scores
+    
+    def get_us_article_sen(us_search_name: str, start: str, end: str) -> Tuple[List[Dict], Dict]:
+    Retrieve articles and their sentiment scores from a specific US search name.
+    us_ssl_url = f'https://news.google.com/news?hl=eg&gl=us&ie=UTF-8&q={us_search_name}+after:{start}+before:{end}&output=rss'
+    articles = get_feed_items(us_ssl_url, 50)
+    print(us_search_name,"English",len(articles), "articles")
+    sentiment_scores_list = []
+    for article in articles:
+        sentiment_scores = analyze_sentiment(article)
+        sentiment_scores_list.append(sentiment_scores)
+        print(article, sentiment_scores,"\n")
+    return articles, sentiment_scores_list
+    
+    """
